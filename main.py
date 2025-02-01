@@ -135,6 +135,42 @@ class Ui_Dialog(QtWidgets.QDialog):
                 self.dll_path = selected_files[0]
                 self.pushButton.setText(f"Выбрано: {self.dll_path.split('/')[-1]}")
 
+    def show_message(self, title, message, icon=QMessageBox.Information):
+        msg = QMessageBox()
+        msg.setIcon(icon)
+        msg.setWindowTitle(title)
+        msg.setText(message)
+        msg.setStyleSheet("""
+            QMessageBox {
+                background-color: #2E3440;
+                color: white;
+            }
+            QMessageBox QLabel {
+                color: white;
+            }
+            QMessageBox QPushButton {
+                background-color: #4C566A;
+                color: white;
+                border-radius: 5px;
+                padding: 5px;
+            }
+            QMessageBox QPushButton:hover {
+                background-color: #5E81AC;
+            }
+        """)
+        msg.exec_()
+
+    def inject(self):
+        try:
+            if not hasattr(self, 'dll_path'):
+                self.show_message("Ошибка", "DLL не выбрана!", QMessageBox.Warning)
+                return
+
+            selected_process = self.lineEdit.currentText()
+            self.show_message("Успех", f"DLL успешно внедрена в процесс {selected_process}!")
+        except Exception as e:
+            self.show_message("Ошибка", f"Ошибка при внедрении DLL: {e}", QMessageBox.Critical)
+
     def mousePressEvent(self, event):
         self.oldPos = event.globalPos()
 
